@@ -1,0 +1,2 @@
+## Application of GraphQL in React
+## Objectives: To kickstart the development of your rick and morty application using Next.js, you will set up a new project with TypeScript, ESLint, and Tailwind CSS.
