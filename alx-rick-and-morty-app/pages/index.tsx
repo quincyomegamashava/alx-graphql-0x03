@@ -1,26 +1,73 @@
-import { useQuery } from "@apollo/client";
-import { GET_EPISODES } from "@/graphql/queries";
+import { useQuery } from "@apollo/client"
+import { GET_EPISODES } from "@/graphql/queries"
+import { EpisodeProps } from "@/interfaces"
+import EpisodeCard from "@/components/common/EpisodeCard"
+import { useEffect, useState } from "react"
 
-export default function Home() {
-  const { data, loading, error } = useQuery(GET_EPISODES, {
-    variables: { page: 1 }
-  });
 
-  if (loading) return <p className="text-center mt-8">Loading episodes...</p>;
-  if (error) return <p className="text-center mt-8 text-red-500">Error: {error.message}</p>;
+
+const Home: React.FC = () => {
+
+  const [page, setPage] = useState<number>(1)
+  const { loading, error, data, refetch } = useQuery(GET_EPISODES, {
+    variables: {
+      page: page
+    }
+  })
+
+  useEffect(() => {
+    refetch()
+  }, [page, refetch])
+
+  if (loading) return <h1>Loading...</h1>
+  if (error) return <h1>Error</h1>
+
+  const results = data?.episodes.results
+  const info = data?.episodes.info
 
   return (
-    <main className="p-8">
-      <h1 className="text-3xl font-bold mb-6 text-center">Rick and Morty Episodes</h1>
-      <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {data.episodes.results.map((episode: any) => (
-          <li key={episode.id} className="border rounded-lg p-4 shadow hover:shadow-lg transition">
-            <h2 className="text-xl font-semibold">{episode.name}</h2>
-            <p className="text-gray-500">{episode.air_date}</p>
-            <span className="text-sm text-blue-600 font-mono">{episode.episode}</span>
-          </li>
-        ))}
-      </ul>
-    </main>
-  );
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#A3D5E0] to-[#F4F4F4] text-gray-800">
+      {/* Header */}
+      <header className="bg-[#4CA1AF] text-white py-6 text-center shadow-md">
+        <h1 className="text-4xl font-bold tracking-wide">Rick and Morty Episodes</h1>
+        <p className="mt-2 text-lg italic">Explore the multiverse of adventures!</p>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-grow p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {results && results.map(({ id, name, air_date, episode }: EpisodeProps, key: number) => (
+            <EpisodeCard
+              id={id}
+              name={name}
+              air_date={air_date}
+              episode={episode}
+              key={key}
+            />
+          ))}
+        </div>
+
+        {/* Pagination Buttons */}
+        <div className="flex justify-between mt-6">
+          <button 
+            onClick={() => setPage(prev => prev > 1 ? prev - 1 : 1)}
+            className="bg-[#45B69C] text-white font-semibold py-2 px-6 rounded-lg shadow-lg hover:bg-[#3D9B80] transition duration-200 transform hover:scale-105">
+            Previous
+          </button>
+          <button 
+            onClick={() => setPage(prev => prev < info.pages ? prev + 1 : prev)}
+            className="bg-[#45B69C] text-white font-semibold py-2 px-6 rounded-lg shadow-lg hover:bg-[#3D9B80] transition duration-200 transform hover:scale-105">
+            Next
+          </button>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-[#4CA1AF] text-white py-4 text-center shadow-md">
+        <p>&copy; 2024 Rick and Morty Fan Page</p>
+      </footer>
+    </div>
+  )
 }
+
+export default Home
