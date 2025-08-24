@@ -1,2 +1,13 @@
-## Application of GraphQL in React
-## Objectives: To kickstart the development of your rick and morty application using Next.js, you will set up a new project with TypeScript, ESLint, and Tailwind CSS.
+# alx-graphql-0x03
+
+## Step 0: ErrorBoundary Component
+
+- Implemented an `ErrorBoundary` class component in TypeScript.
+- This component catches JavaScript errors in its children and displays a fallback UI.
+- Users can recover by clicking "Try again".
+
+### How to Run
+```bash
+cd alx-rick-and-morty-app
+npm install
+npm run dev
